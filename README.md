@@ -1,4 +1,4 @@
-# TIVA-C_CAN_Module_Cheat_Sheet
+# TIVA-C CAN Module Cheat Sheet
 This Repo contains a description for How to use CAN ti-ware Library<br>
 Each Message ID of the module is independent of the other messaegs. One message can be Tx, the other Rx and another one Tx remote. It's really flexiple.<br><br>
 ![CAN 1](https://github.com/Abdulrahman-Yasser/TIVA-C_CAN_Module_Cheat_Sheet/assets/63866803/b5f38140-e160-45c9-b4b4-07ad5e999357)<br>
