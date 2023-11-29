@@ -239,5 +239,75 @@ Here we will receive a remote frame, and automatic response with the array in my
   </li>
   </ol>
 
+Lastly the Interrupt handler function : 
+  ```c
 
+void CANIntHandler(void)
+{
+    uint32_t ui32Status;  /* Declare a variable to store interrupt status. */
+
+    /* Read the CAN interrupt status to find the cause of the interrupt. */
+    ui32Status = CANIntStatus(CAN0_BASE, CAN_INT_STS_CAUSE);
+
+    /* If the cause is a controller status interrupt, then get the status. */
+    if (ui32Status == CAN_INT_INTID_STATUS) {
+        /* Read the controller status. This will return a field of status
+         * error bits that can indicate various errors. Error processing
+         * is not done in this example for simplicity. Refer to the
+         * API documentation for details about the error status bits.
+         * The act of reading this status will clear the interrupt. If the
+         * CAN peripheral is not connected to a CAN bus with other CAN devices
+         * present, then errors will occur and will be indicated in the
+         * controller status.
+         */
+        ui32Status = CANStatusGet(CAN0_BASE, CAN_STS_CONTROL);
+
+        /* Set a flag to indicate some errors may have occurred. */
+        g_bErrFlag = 1;
+    }
+
+    /* Check if the cause is message object 1, which is what we are using for
+     * sending messages.
+     */
+    else{
+        switch(ui32Status){
+        case 1:
+            /* Getting to this point means that the TX interrupt occurred on
+             * message object 1, and the message TX is complete. Clear the
+             * message object interrupt.
+             */
+            CANIntClear(CAN0_BASE, 1);
+
+            /* Increment a counter to keep track of how many messages have been
+             * sent. In a real application, this could be used to set flags to
+             * indicate when a message is sent.
+             */
+            g_ui32MsgCount++;
+            g_bRXFlag_RX1 = 1;
+            /* Since the message was sent, clear any error flags. */
+            g_bErrFlag = 0;
+
+            break;
+        case 2:
+            /* Getting to this point means that the TX interrupt occurred on
+             * message object 1, and the message TX is complete. Clear the
+             * message object interrupt.
+             */
+            CANIntClear(CAN0_BASE, 2);
+
+            /* Increment a counter to keep track of how many messages have been
+             * sent. In a real application, this could be used to set flags to
+             * indicate when a message is sent.
+             */
+            g_ui32MsgCount++;
+            /* Since the message was sent, clear any error flags. */
+            g_bErrFlag = 0;
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+  ```
 
