@@ -1,10 +1,10 @@
 # TIVA-C CAN Module Cheat Sheet
-This Repo contains a description for How to use CAN ti-ware Library<br>
-Each Message ID of the module is independent of the other messaegs. One message can be Tx, the other Rx and another one Tx remote. It's really flexiple.<br><br>
+This Repo contains a description of How to use the CAN ti-ware Library<br>
+Each Message ID of the module is independent of the other messages. One message can be Tx, the other Rx, and another one Tx remote. It's flexible.<br><br>
 ![CAN 1](https://github.com/Abdulrahman-Yasser/TIVA-C_CAN_Module_Cheat_Sheet/assets/63866803/b5f38140-e160-45c9-b4b4-07ad5e999357)<br>
 ## Let's discuss the ti-ware CAN driver.<br>
 ### Modes :
-#### Each CAN module contains 32 message object. Each message object will only act as one of the below modes.<br>
+#### Each CAN module contains 32 message objects. Each message object will only act as one of the below modes.<br>
 
 > MSG_OBJ_TYPE_TX.
 >> Initialize the Message object as transmitting a data message.
@@ -57,9 +57,7 @@ Each Message ID of the module is independent of the other messaegs. One message 
 >> This indicates that a message object has no flags set.
 
 
-## How to Initialize my Message Object.
-
-### Using the below function to initialize it.
+## How to Initialize My Message Object. Use the below function to initialize it.
 
 ```c
 extern void CANMessageSet(uint32_t ui32Base, uint32_t ui32ObjID,
@@ -68,8 +66,7 @@ extern void CANMessageSet(uint32_t ui32Base, uint32_t ui32ObjID,
 <ol>
   <li>
       <ol>Transmitting data :
-        <li>Simple transmission <br>
-This just transmit data and standard ID
+        <li>Simple transmission <br>This just transmits data and standard ID
           
   ```c
             tCANMsgObject TxMsg;
@@ -84,7 +81,7 @@ This just transmit data and standard ID
         
             CANMessageSet( CAN0_BASE, 6, TxMsg, MSG_OBJ_TYPE_TX);
   ```
-That was how to initialize and send your first Message over CAN bus</li>
+That was how to initialize and send your first message over the CAN bus</li>
          <li>Update data and send <br>
 This is how to update data and send it
 
@@ -107,8 +104,9 @@ Successfully transmitted data.<br></li>
     
     CANMessageSet( CAN0_BASE, 6, TxMsg, MSG_OBJ_TYPE_TX);
   ```
-Successfuly updated data and transmitted it with extended ID.</li>
-      <li>Transmitting and update data once it finishes Transmission <br>
+  
+Successfully updated data and transmitted it with extended ID.</li>
+<li> Transmitting and updating data once it finishes Transmission <br>
     
   ```c
     tCANMsgObject TxMsg;
@@ -125,7 +123,7 @@ Successfuly updated data and transmitted it with extended ID.</li>
     CANIntRegister(CAN0_BASE, CANIntHandler);
   ```
 
-It will rise up TxOk bit in CANSTS register. When it's raised, you can put True in a flag and change the data then.</li>
+It will raise TxOk bit in CANSTS register. When it's raised, you can put True in a flag and change the data.</li>
     </ol>
     </li>
     <li>
@@ -146,8 +144,8 @@ It will rise up TxOk bit in CANSTS register. When it's raised, you can put True 
 
     CANMessageSet( CAN0_BASE, 6, TxMsg, MSG_OBJ_TYPE_TX_REMOTE);
   ```
-It will not even check the data of the message structure, it will just transmits a Remote Message.<br>
-If you need to transmit it with Extended ID, just add MSG_OBJ_EXTENDED_ID flag. </li>
+It will not even check the data of the message structure, it will just transmit a Remote Message.<br>
+If you need to transmit it with an Extended ID, just add MSG_OBJ_EXTENDED_ID flag. </li>
 
 </ol>
 </li>
@@ -171,7 +169,7 @@ If you need to transmit it with Extended ID, just add MSG_OBJ_EXTENDED_ID flag. 
   ```    
   </li>
   <li>
-    Receiving Specific standard ID <br>
+    Receiving Specific Standard ID <br>
       This is how to receive anything (not remote nor extended ID) over the Bud
     
   ```c
@@ -204,7 +202,8 @@ Here we will receive a remote frame, change data, and send it<br>
     myMsgRemoteResponse.ui32MsgID = 0;
     myMsgRemoteResponse.ui32MsgLen = 8;
     CANMessageSet(CAN0_BASE, 1, &myMsgRemoteResponse, MSG_OBJ_TYPE_RX_REMOTE); // It will not reaceive data.
-    // we can read it in using function CANStatusGet(CAN0_BASE, CAN_STS_TXREQUEST);
+    // we can read it in using function CANStatusGet(CAN0_BASE, CAN_STS_TXREQUEST); or simply
+    // it will rise RxOK,, which is better to check
 
   ```
 
@@ -212,10 +211,10 @@ Here we will receive a remote frame, change data, and send it<br>
   </ol>
 
 <li>
-<ol>Automatic Response for Receive remote data<br>
+<ol>Automatic Response for Receive Remote Data <br>
 using Rx ISR
 <li> receive remote Automatic response <br>
-Here we will receive a remote frame, and automatic response with the array in my tCANMsgObject MsgData variable<br>
+Here we will receive a remote frame and automatic response with the array in my tCANMsgObject MsgData variable<br>
 
   ```c
     uint8_t my_8_AutoResponseRemoteData[8] = {2, 2, 2, 2, 2, 2, 2, 2};
@@ -228,7 +227,9 @@ Here we will receive a remote frame, and automatic response with the array in my
     myRcvMsgAutoResponse.ui32MsgLen = 8;
 
     CANMessageSet(CAN0_BASE, 1, &myRcvMsgAutoResponse, MSG_OBJ_TYPE_RXTX_REMOTE); // It will not reaceive data.
-    // we can know once it rise the ISR using the function CANStatusGet(CAN0_BASE, CAN_STS_NEWDAT);
+    // CANStatusGet(CAN0_BASE, CAN_STS_CONTROL); to get the message caused the ISR
+    // we can know once it rise the ISR using the function CANStatusGet(CAN0_BASE, CAN_STS_NEWDAT), but it's not preffered;
+
   ```
 
   </li>
