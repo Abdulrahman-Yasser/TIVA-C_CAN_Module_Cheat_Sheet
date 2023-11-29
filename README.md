@@ -70,7 +70,8 @@ extern void CANMessageSet(uint32_t ui32Base, uint32_t ui32ObjID,
       <ol>Transmitting data :
         <li>Simple transmission <br>
 This just transmit data and standard ID
-          ```c
+          
+  ```c
             tCANMsgObject TxMsg;
         
             uint8_t my_Tx_Data[8] = {1, 2, 3, 4, 5, 6, 7, 8};
@@ -82,20 +83,22 @@ This just transmit data and standard ID
             TxMsg.ui32Flags = MSG_OBJ_NO_FLAGS;
         
             CANMessageSet( CAN0_BASE, 6, TxMsg, MSG_OBJ_TYPE_TX);
-          ```
+  ```
 That was how to initialize and send your first Message over CAN bus</li>
          <li>Update data and send <br>
 This is how to update data and send it
-```c
+
+  ```c
     /* whateveer changes i want to make to the data */
     my_Tx_Data[5] = 22;
     my_Tx_Data[6] = 95;
 
     CANMessageSet( CAN0_BASE, 6, TxMsg, MSG_OBJ_TYPE_TX);
-```
+  ```
 Successfully transmitted data.<br></li>
       <li>Transmit data with Extended ID <br>
-```c
+      
+  ```c
     /* whateveer changes i want to make to the data */
     my_Tx_Data[5] = 22;
     my_Tx_Data[6] = 95;
@@ -103,10 +106,11 @@ Successfully transmitted data.<br></li>
     TxMsg.ui32Flags = MSG_OBJ_EXTENDED_ID;
     
     CANMessageSet( CAN0_BASE, 6, TxMsg, MSG_OBJ_TYPE_TX);
-```
+  ```
 Successfuly updated data and transmitted it with extended ID.</li>
       <li>Transmitting and update data once it finishes Transmission <br>
-```c
+    
+  ```c
     tCANMsgObject TxMsg;
 
     uint8_t my_Tx_Data[8] = {1, 2, 3, 4, 5, 6, 7, 8};
@@ -119,8 +123,8 @@ Successfuly updated data and transmitted it with extended ID.</li>
 
     CANMessageSet( CAN0_BASE, 6, TxMsg, MSG_OBJ_TYPE_TX);
     CANIntRegister(CAN0_BASE, CANIntHandler);
+  ```
 
-```
 It will rise up TxOk bit in CANSTS register. When it's raised, you can put True in a flag and change the data then.</li>
     </ol>
     </li>
@@ -130,7 +134,7 @@ It will rise up TxOk bit in CANSTS register. When it's raised, you can put True 
  <li> 11-bit ID, and no interrupt
     <br>
    
-    ```c
+  ```c
     tCANMsgObject TxMsg;
     uint8_t my_Tx_Data[8] = {1, 2, 3, 4, 5, 6, 7, 8};
 
@@ -141,7 +145,7 @@ It will rise up TxOk bit in CANSTS register. When it's raised, you can put True 
     TxMsg.ui32Flags = MSG_OBJ_NO_FLAGS;
 
     CANMessageSet( CAN0_BASE, 6, TxMsg, MSG_OBJ_TYPE_TX_REMOTE);
-    ```
+  ```
 It will not even check the data of the message structure, it will just transmits a Remote Message.<br>
 If you need to transmit it with Extended ID, just add MSG_OBJ_EXTENDED_ID flag. </li>
 
@@ -156,7 +160,7 @@ If you need to transmit it with Extended ID, just add MSG_OBJ_EXTENDED_ID flag. 
     Receiving any standard ID <br>
       This is how to receive anything (not remote nor extended ID) over the Bud.
     
-    ```c
+  ```c
     tCANMsgObject RxMsg;
     RxMsg.ui32MsgID = 0x00;
     RxMsg.ui32MsgIDMask = 0x00;    // must be zero to receive any ID
@@ -164,13 +168,13 @@ If you need to transmit it with Extended ID, just add MSG_OBJ_EXTENDED_ID flag. 
     RxMsg.ui32Flags = MSG_OBJ_RX_INT_ENABLE | MSG_OBJ_USE_ID_FILTER;
 
     CANMessageSet(CAN0_BASE, 1, &RxMsg, MSG_OBJ_TYPE_RX); // send as msg object 1
-    ```    
+  ```    
   </li>
   <li>
     Receiving Specific standard ID <br>
       This is how to receive anything (not remote nor extended ID) over the Bud
     
-    ```c
+  ```c
     tCANMsgObject RxMsg;
 
     RxMsg.ui32MsgID = 0x32;
@@ -179,7 +183,7 @@ If you need to transmit it with Extended ID, just add MSG_OBJ_EXTENDED_ID flag. 
     RxMsg.ui32Flags = MSG_OBJ_RX_INT_ENABLE | MSG_OBJ_USE_ID_FILTER;
 
     CANMessageSet(CAN0_BASE, 1, &RxMsg, MSG_OBJ_TYPE_RX); // send as msg object 1
-    ```    
+  ```    
     
   </li>
   </ol>
@@ -190,7 +194,7 @@ using Rx ISR
 <li> receive remote <br>
 Here we will receive a remote frame, change data, and send it<br>
 
-    ```c
+  ```c
     uint8_t my_8_RemoteDataResponse[8] = {1, 2, 3, 4, 5, 6, 7, 8};
     tCANMsgObject myMsgRemoteResponse;
 
@@ -202,7 +206,7 @@ Here we will receive a remote frame, change data, and send it<br>
     CANMessageSet(CAN0_BASE, 1, &myMsgRemoteResponse, MSG_OBJ_TYPE_RX_REMOTE); // It will not reaceive data.
     // we can read it in using function CANStatusGet(CAN0_BASE, CAN_STS_TXREQUEST);
 
-    ```
+  ```
 
   </li>
   </ol>
@@ -213,7 +217,7 @@ using Rx ISR
 <li> receive remote Automatic response <br>
 Here we will receive a remote frame, and automatic response with the array in my tCANMsgObject MsgData variable<br>
 
-    ```c
+  ```c
     uint8_t my_8_AutoResponseRemoteData[8] = {2, 2, 2, 2, 2, 2, 2, 2};
     tCANMsgObject myRcvMsgAutoResponse;
 
@@ -225,7 +229,7 @@ Here we will receive a remote frame, and automatic response with the array in my
 
     CANMessageSet(CAN0_BASE, 1, &myRcvMsgAutoResponse, MSG_OBJ_TYPE_RXTX_REMOTE); // It will not reaceive data.
     // we can know once it rise the ISR using the function CANStatusGet(CAN0_BASE, CAN_STS_NEWDAT);
-    ```
+  ```
 
   </li>
   </ol>
